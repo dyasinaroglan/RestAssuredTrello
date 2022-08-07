@@ -15,12 +15,10 @@ public class ParentClass {
     public static RequestSpecification request;
     public static Response response;
     public static String boardID;
-    public static List<String> cardID = new ArrayList();
-
+    public List<String> cardID = new ArrayList();
 
     public static final String key = "45882a4d291da73ea2c5a0d78deaa742";
     public static final String token = "6f664266ebb85e01d2d8fe99341fcdfc4436de9f13c3eab78df16dfdac4f8d6f";
-
 
 
     public void createBoard(String boardName) {
@@ -60,13 +58,13 @@ public class ParentClass {
 
     }
 
-    public Response createCardRequest(String boardID, String cardName) {
+    public Response createCardRequest(String cardName) {
         JSONObject pathParam = new JSONObject();
         pathParam.put("key", key);
         pathParam.put("token", token);
         pathParam.put("name", cardName);
         pathParam.put("idList", boardID);
-        System.out.println(boardID);
+
         response = RestAssured.given()
                 .queryParam("key", key).queryParam("token", token)
                 .queryParam("name", cardName)
@@ -74,14 +72,14 @@ public class ParentClass {
                 .header("Content-type", "application/json")
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-              //  .body(pathParam.toString())
+                //  .body(pathParam.toString())
                 .when().post("https://api.trello.com/1/cards/")
                 .then().statusCode(200).extract().response();
         return response;
     }
 
-    public void update(String cardName, int size) {
-        String id = cardID.get(size);
+    public void update(String cardName, int randomCard) {
+        String id = cardID.get(random(randomCard));
 
         JSONObject pathParam = new JSONObject();
         pathParam.put("key", key);
@@ -93,11 +91,12 @@ public class ParentClass {
                 .header("Content-type", "application/json")
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-        //        .body(pathParam.toString())
+                .body(pathParam.toString())
                 .when().put("https://api.trello.com/1/cards/" + id);
 
     }
-    public void cardDelete(int num){
+
+    public void cardDelete(int num) {
 
         String id = cardID.get(num);
 
@@ -109,7 +108,8 @@ public class ParentClass {
                 .when().delete("https://api.trello.com/1/cards/" + id);
 
     }
-    public void boardDelete(){
+
+    public void boardDelete() {
         response = RestAssured.given()
                 .queryParam("key", key, "token", token)
                 .header("Content-type", "application/json")
